@@ -1,0 +1,84 @@
+version: '3'
+
+services:
+
+  webserver:
+    image: nginx:1.19.6-alpine
+    container_name: webserver
+    restart: unless-stopped
+    ports:
+      - 80:80
+      - 443:443
+    volumes:
+      - ./deployment/development/docker/server:/etc/nginx/conf.d
+    links:
+      - api:api
+    networks:
+      - nflla
+
+  api:
+    container_name: api
+    build:
+      context: .
+      dockerfile: ./deployment/development/docker/api/Dockerfile
+    volumes:
+      - ./nfl-laravel-api:/var/www
+      - ./deployment/development/docker/server/config/php.ini:/usr/local/etc/php/php.ini
+      - ./deployment/development/docker/server/config/www.conf:/usr/local/etc/php-fpm.d/www.conf
+    networks:
+      - nflla
+
+  ui:
+    container_name: ui
+    build:
+      context: .
+      dockerfile: ./deployment/development/docker/ui/Dockerfile
+    working_dir: /app
+    volumes:
+      - ./nfl-angular-ui/:/app
+    ports:
+      - '4200:4200'
+    command: ["npm", "run", "dev"]
+    networks:
+      - nflla
+
+  db:
+    image: mysql:5.7
+    hostname: mysql
+    container_name: mysql
+    command: --default-authentication-plugin=mysql_native_password
+    restart: always
+    environment:
+      MYSQL_DATABASE: 'nfl'
+      MYSQL_USER: 'api'
+      MYSQL_PASSWORD: 'password'
+      MYSQL_ROOT_PASSWORD: 'password'
+    ports:
+      - 3306:3306
+    volumes:
+      - ./mysql-data:/var/lib/mysql
+    networks:
+      - nflla
+
+  cache:
+    image: redis:alpine
+    hostname: redis
+    container_name: redis
+    command: redis-server
+    environment:
+      - REDIS_REPLICATION_MODE=master
+    ports:
+      - 6379:6379
+    volumes:
+      - ./redis-data:/var/lib/redis
+    networks:
+      - nflla
+
+networks:
+    nflla:
+
+volumes:
+  mysql-data:
+    driver: local
+  redis-data:
+    driver: local

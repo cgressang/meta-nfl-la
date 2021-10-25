@@ -1,0 +1,5 @@
+.DS_Store
+/mysql-data/
+/redis-data/
+/nfl-laravel-api/
+/nfl-angular-ui/

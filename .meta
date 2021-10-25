@@ -1,0 +1,6 @@
+{
+  "projects": {
+    "nfl-laravel-api": "https://github.com/cgressang/nfl-laravel-api.git",
+    "nfl-angular": "https://github.com/cgressang/nfl-angular-ui.git"
+  }
+}
