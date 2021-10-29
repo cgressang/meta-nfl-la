@@ -13,6 +13,8 @@ services:
       - ./deployment/development/docker/server:/etc/nginx/conf.d
     links:
       - api:api
+    depends_on:
+      - api
     networks:
       - nflla
 
@@ -25,6 +27,9 @@ services:
       - ./nfl-laravel-api:/var/www
       - ./deployment/development/docker/server/config/php.ini:/usr/local/etc/php/php.ini
       - ./deployment/development/docker/server/config/www.conf:/usr/local/etc/php-fpm.d/www.conf
+    depends_on:
+      - db
+      - cache
     networks:
       - nflla
 
@@ -39,6 +44,8 @@ services:
     ports:
       - '4200:4200'
     command: ["npm", "run", "dev"]
+    depends_on:
+      - api
     networks:
       - nflla
 
@@ -70,7 +77,7 @@ services:
     ports:
       - 6379:6379
     volumes:
-      - ./redis-data:/var/lib/redis
+      - ./redis-data:/data
     networks:
       - nflla
 

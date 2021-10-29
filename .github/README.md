@@ -30,23 +30,27 @@ clone repo
 $ meta git clone git@github.com:cgressang/meta-nfl-la.git
 ```
 
-navigate to frontend
+copy evironment file to api
 
 ```console
-$ cd meta-nfl-la/nfl-angular-ui
-$ npm install
-```
-navigate to backend
-
-```console
-$ cd ../nfl-laravel-api
-$ composer install
+$ cp ./deployment/development/.env ./nfl-laravel-api/.env
 ```
 
-navigate to meta directory and build docker containers
+install npm for frontend
 
 ```console
-$ cd ..
+$ npm install --prefix=./nfl-angular-ui
+```
+
+install coposer packages
+
+```console
+$ composer install --working-dir=./nfl-laravel-api
+```
+
+build containers
+
+```console
 $ make build
 ```
 
@@ -56,8 +60,13 @@ start containers
 $ make watch
 ```
 
+run migrations: once containers are running, exec into api container
 
-Configured Links:
+```console
+$ php artisan migrate
+```
+
+### Configured Links:
 
 backend: `localhost`
 
